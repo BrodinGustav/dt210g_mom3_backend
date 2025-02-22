@@ -3,12 +3,12 @@ const express = require("express");
 const router = express.Router();
 
 //Importerar Blogg-modell
-const Blogg = require("./Models/Blogg");
+const BloggPost = require("../models/Blogg");
 
 //Hämta alla inlägg
 router.get("/", async (req, res) => {
     try {
-        const blogg = await Blogg.find();
+        const blogg = await BloggPost.find();
 
         res.json(blogg);
 
@@ -20,7 +20,7 @@ router.get("/", async (req, res) => {
 //Hämta specifikt inlägg
 router.get("/:id", async (req, res) => {
     try {
-        const blogg = await Blogg.findById((req.params.id));
+        const blogg = await BloggPost.findById((req.params.id));
 
         res.json(blogg);
 
@@ -44,13 +44,13 @@ router.post("/", async (req, res) => {
         }
 
         //Skapar nytt Todo-objekt
-        const newBlogg = new Blogg({ title, description });
+        const newBloggPost = new BloggPost({ title, description });
 
         //Sparar nytt Todo-objekt i databasen
-        await newBlogg.save();
+        await newBloggPost.save();
 
         //Om ok, skicka tillbaka nytt Todo-objekt
-        res.status(201).json(newBlogg);
+        res.status(201).json(newBloggPost);
 
     } catch (error) {
         //Om error
@@ -65,13 +65,13 @@ router.put("/:id", async (req, res) => {
         console.log("Anrop till PUT:", req.params.id);
         console.log("Body:", req.body);
 
-        const updatedBlogg = await Blogg.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const updatedBloggPost = await BloggPost.findByIdAndUpdate(req.params.id, req.body, { new: true });
 
         // Om inget inlägg hittades
-        if (!updatedBlogg) {
+        if (!updatedBloggPost) {
             return res.status(404).json({ message: "Inlägg inte hittades" });
         } else
-            res.json(updatedBlogg);
+            res.json(updatedBloggPost);
     } catch (error) {
         res.status(400).json({ message: "Fel vid uppdatering av inlägg" });
     }
@@ -80,7 +80,7 @@ router.put("/:id", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
     try {
-        await Blogg.findByIdAndDelete(req.params.id);
+        await BloggPost.findByIdAndDelete(req.params.id);
         res.json({ message: "Inlägg raderad" });
     } catch (error) {
         res.status(400).json({ message: "Fel vid radering av inlägg" });
