@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 
 //Importerar routes för API-anrop
+const AuthRoutes = require("./Routes/authRoutes");
 const BloggRoutes = require("./Routes/BloggRoutes");
 
 const app = express();
@@ -16,7 +17,8 @@ app.use(express.json());    //Tolkar JSON-data i inkommande förfrågningar
 app.use(cors());            //Tillåter kors-anrop
 
 //Definierar routes
-app.use("/blogg", BloggRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/blogg", BloggRoutes);
 
 //Anslut till MongoDB
 const startServer = async () => {

@@ -1,12 +1,15 @@
 //Importerar Express och skapar router-instans
 const express = require("express");
+const authMiddleware = require("../MiddleWare/authMiddleware");
+
 const router = express.Router();
+
 
 //Importerar Blogg-modell
 const BloggPost = require("../models/Blogg");
 
 //Hämta alla inlägg
-router.get("/", async (req, res) => {
+router.get("/", authMiddleware, async (req, res) => {
     try {
         const blogg = await BloggPost.find();
 
@@ -18,7 +21,7 @@ router.get("/", async (req, res) => {
 });
 
 //Hämta specifikt inlägg
-router.get("/:id", async (req, res) => {
+router.get("/:id", authMiddleware, async (req, res) => {
     try {
         const blogg = await BloggPost.findById((req.params.id));
 
@@ -30,7 +33,7 @@ router.get("/:id", async (req, res) => {
 });
 
 //Skapa nytt inlägg
-router.post("/", async (req, res) => {
+router.post("/", authMiddleware, async (req, res) => {
     try {
 
         console.log("Mottaget body:", req.body); // Logga inkommande data
@@ -59,7 +62,7 @@ router.post("/", async (req, res) => {
 });
 
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", authMiddleware, async (req, res) => {
     try {
 
         console.log("Anrop till PUT:", req.params.id);
@@ -78,7 +81,7 @@ router.put("/:id", async (req, res) => {
 });
 
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authMiddleware, async (req, res) => {
     try {
         await BloggPost.findByIdAndDelete(req.params.id);
         res.json({ message: "Inlägg raderad" });
