@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../Models/User");
+const authMiddleware = require("../MiddleWare/authMiddleware");
 
 
 const router = express.Router();
@@ -68,7 +69,7 @@ router.post("/login", async (req, res) => {
 
 
 //Hämta alla användare
-router.get("/", authMiddleware async (req, res) => {
+router.get("/", authMiddleware, async (req, res) => {
     try {
         const user = await User.find();
 

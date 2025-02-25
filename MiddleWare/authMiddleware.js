@@ -4,6 +4,9 @@ const jwt = require("jsonwebtoken");
 const authMiddleware = (req, res, next) => {
     const token = req.header("Authorization")?.replace("Bearer ", "");
 
+    //Debugg 
+    console.log("Token mottagen:", token); 
+
     //Kontroll om token finns
     if(!token)
         return res.status(401).json({ error: "Åtkomst nekad:" });
