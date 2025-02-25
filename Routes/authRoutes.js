@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../Models/User");
+const BloggPost = require("../Models/Blogg");
 const authMiddleware = require("../MiddleWare/authMiddleware");
 
 
@@ -26,8 +27,6 @@ router.post("/register", async (req, res) => {
 
         //Hasha lösenord
         const hashedPassword = await bcrypt.hash(password, 10);
-
-        res.json({ message: hashedPassword });
 
         //Spara användare
         user = new User({ username, password: hashedPassword });
@@ -66,6 +65,8 @@ router.post("/login", async (req, res) => {
     }
 });
 
+
+/***CRUD GÄLLANDE USER ***/
 
 
 //Hämta alla användare
@@ -119,6 +120,67 @@ router.delete("/:id", authMiddleware, async (req, res) => {
         res.json({ message: "Användare raderad" });
     } catch (error) {
         res.status(400).json({ message: "Fel vid radering av användare" });
+    }
+});
+
+
+/***CRUD GÄLLANDE BLOGGINLÄGG ***/
+
+//Skapa nytt inlägg
+router.post("/bloggPost", authMiddleware, async (req, res) => {
+    try {
+
+        console.log("Mottaget body:", req.body); // Logga inkommande data
+        
+        //Lagrar input-värden
+        const { title, description } = req.body;
+
+        //Validerar om alla fält finns med
+        if (!title || !description ) {
+            return res.status(400).json({ message: "Alla fält måste vara ifyllda" });
+        }
+
+        //Skapar nytt Todo-objekt
+        const newBloggPost = new BloggPost({ title, description });
+
+        //Sparar nytt Todo-objekt i databasen
+        await newBloggPost.save();
+
+        //Om ok, skicka tillbaka nytt Todo-objekt
+        res.status(201).json(newBloggPost);
+
+    } catch (error) {
+        //Om error
+        res.status(400).json({ message: "Fel vid skapande av inlägg" });
+    }
+});
+
+
+router.put("/bloggPost/:id", authMiddleware, async (req, res) => {
+    try {
+
+        console.log("Anrop till PUT:", req.params.id);
+        console.log("Body:", req.body);
+
+        const updatedBloggPost = await BloggPost.findByIdAndUpdate(req.params.id, req.body, { new: true });
+
+        // Om inget inlägg hittades
+        if (!updatedBloggPost) {
+            return res.status(404).json({ message: "Inlägg inte hittades" });
+        } else
+            res.json(updatedBloggPost);
+    } catch (error) {
+        res.status(400).json({ message: "Fel vid uppdatering av inlägg" });
+    }
+});
+
+
+router.delete("/bloggPost/:id", authMiddleware, async (req, res) => {
+    try {
+        await BloggPost.findByIdAndDelete(req.params.id);
+        res.json({ message: "Inlägg raderad" });
+    } catch (error) {
+        res.status(400).json({ message: "Fel vid radering av inlägg" });
     }
 });
 
