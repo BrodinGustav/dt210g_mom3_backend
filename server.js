@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 
 //Importerar routes för API-anrop
-const AuthRoutes = require("./Routes/authRoutes");
+const authRoutes = require("./Routes/authRoutes");
 const BloggRoutes = require("./Routes/BloggRoutes");
 
 const app = express();

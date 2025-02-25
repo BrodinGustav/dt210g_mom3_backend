@@ -2,14 +2,13 @@
 const express = require("express");
 const authMiddleware = require("../MiddleWare/authMiddleware");
 
+//Importerar Blogg-modell
+const BloggPost = require("../Models/Blogg");
+
 const router = express.Router();
 
-
-//Importerar Blogg-modell
-const BloggPost = require("../models/Blogg");
-
 //Hämta alla inlägg
-router.get("/", authMiddleware, async (req, res) => {
+router.get("/", async (req, res) => {
     try {
         const blogg = await BloggPost.find();
 
