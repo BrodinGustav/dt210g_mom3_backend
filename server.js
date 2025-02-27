@@ -10,7 +10,7 @@ const BloggRoutes = require("./Routes/BloggRoutes");
 const app = express();
 
 //Använder port från .env, fallback om port ej fungerar
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 
 //Middleware
 app.use(express.json());    //Tolkar JSON-data i inkommande förfrågningar

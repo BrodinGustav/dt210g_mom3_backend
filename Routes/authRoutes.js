@@ -11,42 +11,64 @@ const router = express.Router();
 //Registrera användare
 router.post("/register", async (req, res) => {
     try {
-        const { username, password } = req.body;
+        const { email, password } = req.body;
+
+        console.log(req.body);
 
         //Validera input
-        if(!username || !password) {
-            return res.status(400).json({error: "Felaktigt input, skicka användarnamn och lösenord"});
+        if(!email || !password) {
+            return res.status(400).json({error: "Felaktigt input, skicka email och lösenord"});
         }
 
         //Kontroll om användare finns
-        let user = await User.findOne({ username });
+        let user = await User.findOne({ email });
 
         if (user) {
-            return res.status(400).json({ error: "Användarnamnet är upptaget. " });
+            return res.status(400).json({ error: "email är upptaget. " });
         }
 
         //Hasha lösenord
         const hashedPassword = await bcrypt.hash(password, 10);
 
         //Spara användare
-        user = new User({ username, password: hashedPassword });
+        user = new User({ email, password: hashedPassword });
+
+        console.log(user);
+
         await user.save();
 
-        res.json({ message: "Registrering lyckades!" });
+        res.json({ 
+            message: "Registrering lyckades!", 
+            token:  token,
+            user: {
+                _id: user._id,
+                email: user.email,
+            }
+        });
+
     } catch (error) {
-        res.status(500).json({ error: "Serverfel" });
+
+        console.error("Error during registration:", error); 
+        res.status(500).json({ 
+            error: "Serverfel",
+            message: error.message, 
+            stack: error.stack  
+        });
     }
 });
 
 //Login
 router.post("/login", async (req, res) => {
     try {
-        const { username, password } = req.body;
-        const user = await User.findOne({ username });
+        const { email, password } = req.body;
+
+        console.log("Loggar in Användare med mail:" + email )
+
+        const user = await User.findOne({ email });
 
         //Kontroll om användare finns
         if (!user) {
-            return res.status(400).json({ error: "Fel användarnamn eller lösenord " });
+            return res.status(400).json({ error: "Fel email eller lösenord " });
         }
 
         //Kontroll om lösenord stämmer
@@ -59,7 +81,7 @@ router.post("/login", async (req, res) => {
         //Om allt ok, signera token
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-        res.json({ message: "Inloggning lyckades!", token });
+        res.json({ message: "Inloggning lyckades!", token, user });
     } catch (error) {
         res.status(500).json({ error: "Serverfel" });
     }
