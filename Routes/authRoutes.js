@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../Models/User");
 const BloggPost = require("../Models/Blogg");
 const authMiddleware = require("../MiddleWare/authMiddleware");
+require("dotenv").config();
 
 
 const router = express.Router();
@@ -11,13 +12,13 @@ const router = express.Router();
 //Registrera användare
 router.post("/register", async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, firstName } = req.body;
 
         console.log(req.body);
 
         //Validera input
-        if(!email || !password) {
-            return res.status(400).json({error: "Felaktigt input, skicka email och lösenord"});
+        if(!email || !password || !firstName) {
+            return res.status(400).json({error: "Felaktigt input, skicka email, lösenord och namn"});
         }
 
         //Kontroll om användare finns
@@ -31,11 +32,20 @@ router.post("/register", async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         //Spara användare
-        user = new User({ email, password: hashedPassword });
+        user = new User({ email, firstName, password: hashedPassword });
 
         console.log(user);
 
         await user.save();
+
+        console.log("JWT_SECRET:", process.env.JWT_SECRET);
+
+           //Skapa en token med JWT
+           const token = jwt.sign(
+            { userId: user._id, email: user.email }, 
+            process.env.JWT_SECRET, 
+            { expiresIn: "1h" } 
+        );
 
         res.json({ 
             message: "Registrering lyckades!", 
@@ -43,6 +53,7 @@ router.post("/register", async (req, res) => {
             user: {
                 _id: user._id,
                 email: user.email,
+                firstName: user.firstName
             }
         });
 
