@@ -23,10 +23,28 @@ app.use("/api/auth", authRoutes);
 app.use("/api/blogg", BloggRoutes);
 app.use("/api/validate", validateRoutes);
 
+//Kontroll vilka anrop som hamnar på vilka routes
+app.use((req, res, next) => {
+    console.log(`Incoming request: ${req.method} ${req.url}`);
+    next();
+});
+
+
+console.log("Loaded routes: /api/auth, /api/blogg, /api/validate");
+
+
+
 //Anslut till MongoDB
 const startServer = async () => {
     try {
         await mongoose.connect(process.env.MONGO_URI)
+
+        console.log(`API endpoints initialized: 
+            - GET    /api/blogg
+            - GET    /api/blogg/:id
+            - POST   /api/blogg
+            - PUT    /api/blogg/:id
+            - DELETE /api/blogg/:id`);
 
         //Startar server
         app.listen(port, (err) => {

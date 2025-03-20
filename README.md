@@ -1,7 +1,19 @@
-http://localhost:3000/api/auth/register - för registrering av användare
+För autentisering (authRoutes):
 
-http://localhost:3000/api/auth/login - för inlogg
+POST /api/auth/register - För registrering av användare.
+POST /api/auth/login - För inloggning av användare.
+GET /api/auth/ - Hämta alla användare (authMiddleware krävs).
+GET /api/auth/:id - Hämta en specifik användare med ID (authMiddleware krävs).
+PUT /api/auth/:id - Uppdatera en användare med ID (authMiddleware krävs).
+DELETE /api/auth/:id - Ta bort en användare med ID (authMiddleware krävs).
 
-http://localhost:3000/api/blogg - hämtar alla inlägg
 
-http://localhost:3000/api/auth/bloggPost/ - Används för auktentiserad CRUD gällande blogginlägg (PUT, DELETE, POST)
+För bloggposter (BloggRoutes):
+
+GET	/api/blogg	Hämta alla bloggposter
+GET	/api/blogg/:id	Hämta en specifik bloggpost (kräver authMiddleware)
+PUT	/api/blogg/:id	Uppdatera en bloggpost
+DELETE	/api/blogg/:id	Radera en bloggpost (kräver authMiddleware)
+
+
+Den exakta vägen för validering är inte angiven, men med basvägen /api/validate, troligtvis innehåller den rutter som validerar data på något sätt, men detaljer om dessa rutter saknas i den kod du har delat.

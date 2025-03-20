@@ -2,7 +2,6 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../Models/User");
-const BloggPost = require("../Models/Blogg");
 const authMiddleware = require("../MiddleWare/authMiddleware");
 require("dotenv").config();
 
@@ -73,7 +72,7 @@ router.post("/login", async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        console.log("Loggar in Användare med mail:" + email )
+        console.log("Loggar in Användare med mail: " + email )
 
         const user = await User.findOne({ email });
 
@@ -90,7 +89,7 @@ router.post("/login", async (req, res) => {
         }
 
         //Om allt ok, signera token
-        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "8h" });
 
         res.json({ message: "Inloggning lyckades!", token, user });
     } catch (error) {
@@ -127,7 +126,7 @@ router.get("/:id", authMiddleware, async (req, res) => {
 });
 
 
-
+//Uppdatera användare
 router.put("/:id", authMiddleware, async (req, res) => {
     try {
 
@@ -146,7 +145,7 @@ router.put("/:id", authMiddleware, async (req, res) => {
     }
 });
 
-
+//Radera användare
 router.delete("/:id", authMiddleware, async (req, res) => {
     try {
         await User.findByIdAndDelete(req.params.id);
@@ -157,66 +156,6 @@ router.delete("/:id", authMiddleware, async (req, res) => {
 });
 
 
-
-/***CRUD GÄLLANDE BLOGGINLÄGG ***/
-
-//Skapa nytt inlägg
-router.post("/bloggPost", authMiddleware, async (req, res) => {
-    try {
-
-        console.log("Mottaget body:", req.body); // Logga inkommande data
-        
-        //Lagrar input-värden
-        const { title, description } = req.body;
-
-        //Validerar om alla fält finns med
-        if (!title || !description ) {
-            return res.status(400).json({ message: "Alla fält måste vara ifyllda" });
-        }
-
-        //Skapar nytt Todo-objekt
-        const newBloggPost = new BloggPost({ title, description });
-
-        //Sparar nytt Todo-objekt i databasen
-        await newBloggPost.save();
-
-        //Om ok, skicka tillbaka nytt Todo-objekt
-        res.status(201).json(newBloggPost);
-
-    } catch (error) {
-        //Om error
-        res.status(400).json({ message: "Fel vid skapande av inlägg" });
-    }
-});
-
-
-router.put("/bloggPost/:id", authMiddleware, async (req, res) => {
-    try {
-
-        console.log("Anrop till PUT:", req.params.id);
-        console.log("Body:", req.body);
-
-        const updatedBloggPost = await BloggPost.findByIdAndUpdate(req.params.id, req.body, { new: true });
-
-        // Om inget inlägg hittades
-        if (!updatedBloggPost) {
-            return res.status(404).json({ message: "Inlägg inte hittades" });
-        } else
-            res.json(updatedBloggPost);
-    } catch (error) {
-        res.status(400).json({ message: "Fel vid uppdatering av inlägg" });
-    }
-});
-
-
-router.delete("/bloggPost/:id", authMiddleware, async (req, res) => {
-    try {
-        await BloggPost.findByIdAndDelete(req.params.id);
-        res.json({ message: "Inlägg raderad" });
-    } catch (error) {
-        res.status(400).json({ message: "Fel vid radering av inlägg" });
-    }
-});
 
 
 module.exports = router;
