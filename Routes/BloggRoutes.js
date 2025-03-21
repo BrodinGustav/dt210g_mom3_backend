@@ -9,6 +9,7 @@ const BloggPost = require("../Models/Blogg");
 
 const router = express.Router();
 
+
 //Hämta alla inlägg
 router.get("/", async (req, res) => {
     try {
@@ -34,7 +35,7 @@ router.get("/:id", authMiddleware, async (req, res) => {
 });
 
 //Skapa nytt inlägg
-router.post("/blogg", authMiddleware, async (req, res) => {
+router.post("/", authMiddleware, async (req, res) => {
     try {
 
         console.log("Mottaget body:", req.body); // Logga inkommande data
@@ -65,7 +66,7 @@ router.post("/blogg", authMiddleware, async (req, res) => {
 
 //Uppdatera
 
-router.put("/blogg/:id", authMiddleware, async (req, res) => {
+router.put("/:id", authMiddleware, async (req, res) => {
     try {
 
         console.log(req.params.id);
@@ -86,17 +87,21 @@ router.put("/blogg/:id", authMiddleware, async (req, res) => {
             res.json(updatedBloggPost);
     } catch (error) {
         res.status(400).json({ message: "Fel vid uppdatering av inlägg" });
+        console.error("Fel från server:", errorData);
+        throw new Error("Fel vid uppdatering av inlägg.");
     }
 });
 
 
 //Radera
-router.delete("/blogg/:id", authMiddleware, async (req, res) => {
+router.delete("/:id", authMiddleware, async (req, res) => {
     try {
         await BloggPost.findByIdAndDelete(req.params.id);
         res.json({ message: "Inlägg raderad" });
     } catch (error) {
         res.status(400).json({ message: "Fel vid radering av inlägg" });
+        console.error("Fel från server:", error);
+        throw new Error({ message: "Fel vid uppdatering av inlägg", error: error.message});
     }
 });
 
