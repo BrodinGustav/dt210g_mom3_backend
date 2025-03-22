@@ -13,7 +13,7 @@ const router = express.Router();
 //Hämta alla inlägg
 router.get("/", async (req, res) => {
     try {
-        const blogg = await BloggPost.find();
+        const blogg = await BloggPost.find().populate("author", "firstName"); //Hämtar användarnamn;
 
         res.json(blogg);
 
@@ -22,10 +22,11 @@ router.get("/", async (req, res) => {
     }
 });
 
+
 //Hämta specifikt inlägg
 router.get("/:id", authMiddleware, async (req, res) => {
     try {
-        const blogg = await BloggPost.findById((req.params.id));
+        const blogg = await BloggPost.findById((req.params._id));
 
         res.json(blogg);
 
@@ -40,26 +41,36 @@ router.post("/", authMiddleware, async (req, res) => {
 
         console.log("Mottaget body:", req.body); // Logga inkommande data
         
+        console.log(req.user);
+
         //Lagrar input-värden
-        const { title, description } = req.body;
+        const { title, description } = req.body;    
+
+        if (!req.user) {
+            return res.status(400).json({ message: "Ingen användare inloggad" });
+        }
+
 
         //Validerar om alla fält finns med
         if (!title || !description ) {
             return res.status(400).json({ message: "Alla fält måste vara ifyllda" });
         }
 
-        //Skapar nytt Todo-objekt
-        const newBloggPost = new BloggPost({ title, description });
+        console.log("req.user:", req.user);
 
-        //Sparar nytt Todo-objekt i databasen
+        //Skapar nytt blogg-objekt
+        const newBloggPost = new BloggPost({ title, description,  author: req.user.userId }); //Kopplar inlägg till den inloggade användaren
+
+        //Sparar nytt blogg-objekt i databasen
         await newBloggPost.save();
 
-        //Om ok, skicka tillbaka nytt Todo-objekt
+        //Om ok, skicka tillbaka nytt blogg-objekt
         res.status(201).json(newBloggPost);
 
     } catch (error) {
         //Om error
-        res.status(400).json({ message: "Fel vid skapande av inlägg" });
+        console.error("Fel vid skapande av inlägg:", error);
+        res.status(400).json({ message: "Fel vid skapande av inlägg",  error: error.message });
     }
 });
 
@@ -96,8 +107,19 @@ router.put("/:id", authMiddleware, async (req, res) => {
 //Radera
 router.delete("/:id", authMiddleware, async (req, res) => {
     try {
+
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({ message: "Ogiltigt ID-format" });
+        }
+
+        console.log("Anrop till PUT:", req.params.id);
+
+        console.log("Body:", req.body);
+
+
         await BloggPost.findByIdAndDelete(req.params.id);
         res.json({ message: "Inlägg raderad" });
+
     } catch (error) {
         res.status(400).json({ message: "Fel vid radering av inlägg" });
         console.error("Fel från server:", error);

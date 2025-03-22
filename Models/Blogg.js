@@ -8,6 +8,8 @@ const BloggSchema = new mongoose.Schema({
 
     description: { type: String, required: true, maxlength: 200 },
 
+    author: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, //Referens till User för utskrift av user till specifikt inlägg
+
     //Automatiska createdAt och updatedAt-fält
 }, { timestamps: true });
 
