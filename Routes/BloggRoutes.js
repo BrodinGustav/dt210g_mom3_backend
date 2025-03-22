@@ -26,12 +26,28 @@ router.get("/", async (req, res) => {
 //Hämta specifikt inlägg
 router.get("/:id", authMiddleware, async (req, res) => {
     try {
-        const blogg = await BloggPost.findById((req.params._id));
+
+        const bloggPostId = req.params.id;
+        
+        // Omvandla till MongoDB ObjectId om det inte redan är rätt format
+        if (!mongoose.Types.ObjectId.isValid(bloggPostId)) {
+            return res.status(400).json({ message: 'Ogiltigt ID format' });
+        }
+
+        const blogg = await BloggPost.findById(req.params.id).populate("author", "firstName");
+
+        if (!blogg) {
+            return res.status(404).json({ message: "Bloggposten hittades inte" });
+        }
 
         res.json(blogg);
 
+        //debugg
+        console.log("Skickar tillbaka bloggpost:", bloggPost);
+
     } catch (error) {
-        res.status(500).json({ message: "Fel vid hämtning av inlägg " });
+        console.error("Fel vid hämtning av bloggpost:", error);
+        res.status(500).json({ message: "Fel vid hämtning av inlägg", error: error.message });
     }
 });
 
