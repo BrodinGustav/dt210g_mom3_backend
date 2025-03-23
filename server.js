@@ -12,7 +12,7 @@ const validateRoutes = require("./Routes/validateRoutes");
 const app = express();
 
 //Använder port från .env, fallback om port ej fungerar
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 10000;
 
 //Middleware
 app.use(express.json());    //Tolkar JSON-data i inkommande förfrågningar
