@@ -19,6 +19,8 @@ const corsOptions = {
     origin: "https://dt210gmom3.netlify.app",  //Frontend-URL på Netlify
     methods: ["GET", "POST", "PUT", "DELETE"],  //Metoder som tillåts
     allowedHeaders: ["Content-Type", "Authorization"],  //Tillåter specifika headers
+    preflightContinue: false, //preflight-förfrågningar enligt error från Render
+    optionsSuccessStatus: 204, //För äldre webbläsare
 };
 
 
