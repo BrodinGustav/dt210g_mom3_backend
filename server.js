@@ -16,7 +16,7 @@ const port = process.env.PORT || 5000;
 
 //Middleware
 app.use(express.json());    //Tolkar JSON-data i inkommande förfrågningar
-app.use(cors());            //Tillåter kors-anrop
+app.use(cors({ origin: "*" }));            //Tillåter kors-anrop
 
 //Definierar routes
 app.use("/api/auth", authRoutes);
