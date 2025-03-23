@@ -18,7 +18,7 @@ const port = process.env.PORT || 10000;
 const corsOptions = {
     origin: "https://dt210gmom3.netlify.app",  //Frontend-URL på Netlify
     methods: ["GET", "POST", "PUT", "DELETE"],  //Metoder som tillåts
-    allowedHeaders: ["Content-Type"],  //Tillåter specifika headers
+    allowedHeaders: ["Content-Type", "Authorization"],  //Tillåter specifika headers
 };
 
 
