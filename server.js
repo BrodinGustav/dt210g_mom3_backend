@@ -39,13 +39,6 @@ const startServer = async () => {
     try {
         await mongoose.connect(process.env.MONGO_URI)
 
-        console.log(`API endpoints initialized: 
-            - GET    /api/blogg
-            - GET    /api/blogg/:id
-            - POST   /api/blogg
-            - PUT    /api/blogg/:id
-            - DELETE /api/blogg/:id`);
-
         //Startar server
         app.listen(port, (err) => {
             if (err) {
@@ -61,5 +54,8 @@ const startServer = async () => {
     }
 };
 
+app.get("/", (req, res) => {
+    res.send("API is running...");
+});
 
 startServer(); 
