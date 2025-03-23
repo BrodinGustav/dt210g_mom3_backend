@@ -1,4 +1,4 @@
-require ("dotenv").config();
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -14,9 +14,17 @@ const app = express();
 //Använder port från .env, fallback om port ej fungerar
 const port = process.env.PORT || 10000;
 
+
+const corsOptions = {
+    origin: "https://dt210gmom3.netlify.app",  //Frontend-URL på Netlify
+    methods: ["GET", "POST", "PUT", "DELETE"],  //Metoder som tillåts
+    allowedHeaders: ["Content-Type"],  //Tillåter specifika headers
+};
+
+
 //Middleware
 app.use(express.json());    //Tolkar JSON-data i inkommande förfrågningar
-app.use(cors({ origin: "*" }));            //Tillåter kors-anrop
+app.use(cors(corsOptions));            //Tillåter kors-anrop
 
 //Definierar routes
 app.use("/api/auth", authRoutes);
@@ -28,10 +36,6 @@ app.use((req, res, next) => {
     console.log(`Incoming request: ${req.method} ${req.url}`);
     next();
 });
-
-
-console.log("Loaded routes: /api/auth, /api/blogg, /api/validate");
-
 
 
 //Anslut till MongoDB
