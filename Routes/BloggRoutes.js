@@ -24,7 +24,7 @@ router.get("/", async (req, res) => {
 
 
 //Hämta specifikt inlägg
-router.get("/:id", authMiddleware, async (req, res) => {
+router.get("/:id", async (req, res) => {
     try {
 
         const bloggPostId = req.params.id;
@@ -43,7 +43,7 @@ router.get("/:id", authMiddleware, async (req, res) => {
         res.json(blogg);
 
         //debugg
-        console.log("Skickar tillbaka bloggpost:", bloggPost);
+        console.log("Skickar tillbaka bloggpost:", blogg);
 
     } catch (error) {
         console.error("Fel vid hämtning av bloggpost:", error);

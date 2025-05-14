@@ -16,7 +16,8 @@ const port = process.env.PORT || 10000;
 
 
 const corsOptions = {
-    origin: "https://dt210gmom3.netlify.app",  //Frontend-URL på Netlify
+    //origin: "https://dt210gmom3.netlify.app",  //Frontend-URL på Netlify (OBS JUSTERA TILLBAKA SENARE) KOLLA PORT!
+        origin: "http://localhost:5173",  
     methods: ["GET", "POST", "PUT", "DELETE"],  //Metoder som tillåts
     allowedHeaders: ["Content-Type", "Authorization"],  //Tillåter specifika headers
     preflightContinue: false, //preflight-förfrågningar enligt error från Render
