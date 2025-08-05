@@ -15,5 +15,3 @@ GET	/api/blogg/:id	Hämta en specifik bloggpost (kräver authMiddleware)
 PUT	/api/blogg/:id	Uppdatera en bloggpost
 DELETE	/api/blogg/:id	Radera en bloggpost (kräver authMiddleware)
 
-
-Den exakta vägen för validering är inte angiven, men med basvägen /api/validate, troligtvis innehåller den rutter som validerar data på något sätt, men detaljer om dessa rutter saknas i den kod du har delat.
